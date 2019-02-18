@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Negociações</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.css">
+
+</head>
+
+<body class="container">
+
+    <h1 class="text-center">Negociações</h1>
+
+    <div id="mensagemView"></div>
+
+    <form class="form" onsubmit="negociacaoController.adiciona(event)">
+
+        <div class="form-group">
+            <label for="data">Data</label>
+            <input type="date" id="data" class="form-control" required autofocus />
+        </div>
+
+        <div class="form-group">
+            <label for="quantidade">Quantidade</label>
+            <input type="number" min="1" step="1" id="quantidade" class="form-control" value="1" required />
+        </div>
+
+        <div class="form-group">
+            <label for="valor">Valor</label>
+            <input id="valor" type="number" class="form-control" min="0.01" step="0.01" value="0.0" required />
+        </div>
+
+        <button class="btn btn-primary" type="submit">Incluir</button>
+    </form>
+
+    <div class="text-center">
+        <button class="btn btn-primary text-center" type="button">
+            Importar Negociações
+        </button>
+        <button onclick="negociacaoController.apaga()" class="btn btn-primary text-center" type="button">
+            Apagar
+        </button>
+    </div>
+    <br>
+    <br>
+    <div id="negociacoesView"></div>
+
+    <!-- <script src="js/index.js"></script> primeiro exercicio-->
+    <script src="js/app/models/Negociacao.js"></script>
+    <script src="js/app/controllers/NegociacaoController.js"></script>
+    <script src="js/app/helpers/DateHelper.js"></script>
+    <script src="js/app/models/ListaNegociacoes.js"></script>
+    <script src="js/app/views/View.js"></script>
+    <script src="js/app/views/NegociacoesView.js"></script>
+    <script src="js/app/models/Mensagem.js"></script>
+    <script src="js/app/views/MensagemView.js"></script>
+
+
+    <script>
+        let negociacaoController = new NegociacaoController();        
+    </script>
+
+    <!-- <script>
+        let lista = new Proxy(new ListaNegociacoes(),{
+            get(target, prop, receiver){
+                if(['adiciona','esvazia'].includes(prop) && typeof(target[prop]) == typeof(Function)){//você está na lista de itens que quero interceptar? E você é uma função?
+                    return function(){//function substitui o método adiciona ou esvazia no Proxy!!!
+                        console.log(`a propriedade "${prop}" foi interceptda`);
+                        Reflect.apply(target[prop], target, arguments);
+                    }
+                }
+                return Reflect.get(target, prop, receiver);
+                // console.log(`valor anterior: ${target[prop]} novo valor: ${value}`);
+                // return Reflect.set(target, prop, value, receiver);
+                // console.log(`novo valor: ${value}`);
+                // console.log(`a propriedade "${prop}" foi interceptada`);
+                // return 'Flávio';
+                // return Reflect.get(target, prop, receiver);
+            }
+        });
+        lista.adiciona(new Negociacao(new Date(), 1, 100));  
+        // lista._negociacoes;
+        lista.esvazia();
+        // negociacao._quantidade=10;
+        // negociacao._valor=200;
+        // console.log(negociacao.quantidade);      
+        // console.log(negociacao.valor);      
+    </script>    -->
+
+    <!-- <script>
+        let hoje = new Date();// usar let e não var para manter escopo exemplo do for!!!
+        let n1 = new Negociacao(hoje, 5, 700);
+        console.log(Object.isFrozen(n1));
+        n1._quantidade=5000;//não consigo alterar está congelado no construtor
+        console.log(n1.quantidade);
+        console.log(n1.data);
+        console.log(n1.data.getTime());
+        hoje.setDate(13); //isso não altera pois o get time está no _data
+        console.log(n1.data);
+        console.log(n1.valor);
+        console.log(n1.volume);
+    </script> -->
+</body>
+
+</html>
