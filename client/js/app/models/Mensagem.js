@@ -1,6 +1,6 @@
 class Mensagem {
-    constructor() {
-        this._texto;
+    constructor(texto='') {
+        this._texto=texto;
     }
 
     get texto() {
