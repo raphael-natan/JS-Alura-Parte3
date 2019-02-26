@@ -1,21 +1,58 @@
-class NegociacaoService{
-    obterNegociacaoDaSemana(cb){
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', 'negociacoes/xsemana');//configura
-        xhr.onreadystatechange = () => {
-            if(xhr.readyState == 4){
-                if(xhr.status == 200){
-                    JSON.parse(xhr.responseText).map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor))
-                    .forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
-                    this._mensagem.texto='Negociações importadas com sucesso';
-                    // console.log('Obtendo as negociações do servidor.');
-                    // console.log(xhr.responseText);
-                } else{
-                    console.log(xhr.responseText);
-                    console.log('Não foi possível obter as negociações do servidor.');
-                }    
-            }
-        };
-        xhr.send();//executa
+class NegociacaoService {
+    constructor() {
+        this._http = new HttpService();
     }
+
+    obterNegociacaoDaSemana() {
+        return this._http
+            .get('negociacoes/semana')
+            .then(negociacoes => {
+                console.log(negociacoes);
+                return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
+            })
+            .catch(erro => {
+                console.log(erro);
+                throw new Error('Não foi possível obter as negociações da semana');
+            });
+    }
+
+    obterNegociacaoDaSemanaAnterior() {
+        return this._http
+            .get('negociacoes/anterior')
+            .then(negociacoes => {
+                console.log(negociacoes);
+                return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
+            })
+            .catch(erro => {
+                console.log(erro);
+                throw new Error('Não foi possível obter as negociações da semana anterior');
+            });
+    }
+
+    obterNegociacaoDaSemanaRetrasada() {
+        return this._http
+            .get('negociacoes/retrasada')
+            .then(negociacoes => {
+                console.log(negociacoes);
+                return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
+            })
+            .catch(erro => {
+                console.log(erro);
+                throw new Error('Não foi possível obter as negociações da semana retrasada');
+            });
+    }
+
+    obterNegociacoes() {
+        return Promise.all([
+            this.obterNegociacaoDaSemana(),
+            this.obterNegociacaoDaSemanaAnterior(),
+            this.obterNegociacaoDaSemanaRetrasada()]
+        ).then(periodos => {
+            let negociacoes = periodos
+                .reduce((dados, periodo) => dados.concat(periodo), []);
+            return negociacoes;
+        }).catch(erro => {
+            throw new Error(erro);
+        });
+    }     
 }
