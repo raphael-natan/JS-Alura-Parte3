@@ -1,5 +1,6 @@
 class NegociacaoController {
     constructor() {
+        this._ordemAtual = '';
         let $ = document.querySelector.bind(document);
         this._inputData = $('#data');
         this._inputQuantidade = $('#quantidade');
@@ -20,7 +21,7 @@ class NegociacaoController {
         // });
         // this._listaNegociacoes=ProxyFactory.create(new ListaNegociacoes(), ['adiciona','esvazia'], model=>this._negociacoesView.update(model));        
 
-        this._listaNegociacoes=new Bind(new ListaNegociacoes(), new NegociacoesView($('#negociacoesView')), 'adiciona','esvazia');
+        this._listaNegociacoes=new Bind(new ListaNegociacoes(), new NegociacoesView($('#negociacoesView')), 'adiciona', 'esvazia', 'ordena', 'inverteOrdem');
         // this._negociacoesView.update(this._listaNegociacoes);
 
         // this._mensagem=ProxyFactory.create(new Mensagem(), ['texto'], model=>this._mensagemView.update(model));    
@@ -35,15 +36,18 @@ class NegociacaoController {
         event.preventDefault();
         // let data = new Date(this._inputData.value.split('-').join(',')); Forma não regular tratando data string
         // let data = new Date(this._inputData.value.replace(/-/g,',')); Expressão regular
-
-        this._listaNegociacoes.adiciona(this._criaNegociacao());
-        // this._negociacoesView.update(this._listaNegociacoes);
-
-        this._mensagem.texto = 'Negociação adicionada com sucesso';
-        // this._mensagemView.update(this._mensagem);
-
-        //this._listaNegociacoes.negociacoes.push(this._criaNegociacao()); serve tb porém está fora do adiciona, preciso de cópia da lista
-        this._limpaFormulario();
+        try{
+            this._listaNegociacoes.adiciona(this._criaNegociacao());
+            // this._negociacoesView.update(this._listaNegociacoes);
+    
+            this._mensagem.texto = 'Negociação adicionada com sucesso';
+            // this._mensagemView.update(this._mensagem);
+    
+            //this._listaNegociacoes.negociacoes.push(this._criaNegociacao()); serve tb porém está fora do adiciona, preciso de cópia da lista
+            this._limpaFormulario();
+        }catch(erro){
+            this._mensagem.texto=erro;
+        }
 
         console.log(this._listaNegociacoes.negociacoes.length);
         //this._listaNegociacoes.negociacoes.length=0; não zera devido ao concat, cópia da lista
@@ -84,5 +88,14 @@ class NegociacaoController {
         this._inputValor.value = 0.0;
 
         this._inputData.focus();
+    }
+
+    ordena(coluna){
+        if(this._ordemAtual == coluna){
+            this._listaNegociacoes.inverteOrdem();
+        }else{
+            this._listaNegociacoes.ordena((a,b) => a[coluna] - b[coluna]);
+        }
+        this._ordemAtual = coluna;
     }
 }
